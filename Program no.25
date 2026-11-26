@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <string.h>
+
+int main()
+{
+    int fd;
+    struct stat fileStat;
+    DIR *dir;
+    struct dirent *entry;
+
+    // Create and open a file
+    fd = open("sample.txt", O_CREAT | O_RDWR, 0644);
+
+    if (fd < 0)
+    {
+        perror("File opening failed");
+        return 1;
+    }
+
+    printf("File opened successfully.\n");
+
+    // fcntl system call
+    int flags = fcntl(fd, F_GETFL);
+    printf("File status flags: %d\n", flags);
+
+    // Write data into file
+    write(fd, "Hello UNIX System Calls", 23);
+
+    // lseek system call
+    lseek(fd, 0, SEEK_SET);
+    printf("File pointer moved to beginning.\n");
+
+    // Read data from file
+    char buffer[100];
+    int n = read(fd, buffer, sizeof(buffer) - 1);
+    buffer[n] = '\0';
+
+    printf("File content: %s\n", buffer);
+
+    // stat system call
+    if (stat("sample.txt", &fileStat) == 0)
+    {
+        printf("File size: %ld bytes\n", (long)fileStat.st_size);
+        printf("File permissions: %o\n", fileStat.st_mode & 0777);
+    }
+
+    close(fd);
+
+    // opendir system call
+    dir = opendir(".");
+
+    if (dir == NULL)
+    {
+        perror("Directory opening failed");
+        return 1;
+    }
+
+    printf("\nDirectory contents:\n");
+
+    // readdir system call
+    while ((entry = readdir(dir)) != NULL)
+    {
+        printf("%s\n", entry->d_name);
+    }
+
+    closedir(dir);
+
+    return 0;
+}
