@@ -1,0 +1,36 @@
+t++;
+
+        for(j = 0; j < f; j++) {
+            if(a[j] == p[i]) {
+                found = 1;
+                time[j] = t;
+                break;
+            }
+        }
+
+        if(!found) {
+            pos = 0;
+
+            for(j = 0; j < f; j++) {
+                if(a[j] == -1) {
+                    pos = j;
+                    break;
+                }
+                if(time[j] < time[pos])
+                    pos = j;
+            }
+
+            a[pos] = p[i];
+            time[pos] = t;
+            faults++;
+        }
+
+        for(j = 0; j < f; j++)
+            printf("%d ", a[j]);
+
+        printf("\n");
+    }
+
+    printf("Total Page Faults = %d\n", faults);
+    return 0;
+}
